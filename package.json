@@ -1,0 +1,15 @@
+{
+  "name": "pico"
+, "version": "0.0.1"
+, "description": "A Smaller CouchDB Client"
+, "keywords": "couchdb"
+, "author": { "name": "Stephane Alnet", "email": "stephane@shimaore.net" }
+, "scripts": {
+    "prepublish": "coffee -c pico.coffee"
+  }
+, "dependencies": {
+    "request": ">=2.9.100"
+  }
+, "engines": { "node": ">=0.4.7" }
+, "private": false
+}
