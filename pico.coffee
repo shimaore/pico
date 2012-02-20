@@ -22,7 +22,8 @@ class pico_request extends request
         options.uri = @prefix uri
       else if typeof uri is 'string'
         options = @prefix uri
-      else options = uri
+      else
+        options = @prefix uri
       if callback
         options.callback = callback
         method options
