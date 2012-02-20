@@ -7,6 +7,8 @@
 , "scripts": {
     "prepublish": "coffee -c pico.coffee"
   }
+, "main": "pico.js"
+, "files": ["pico.js"]
 , "dependencies": {
     "request": ">=2.9.100"
   }
