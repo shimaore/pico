@@ -6,7 +6,9 @@
 ## pico.request
 # pico.request is mikeal/request extended with a prefix URI that
 # is automatically prepended to any URI.
-class pico_request extends require 'request'
+request = require 'request'
+
+class pico_request extends request
   constructor: (@base_uri) ->
 
   prefix: (uri) -> @base_uri + if uri? then '/'+uri else ''
