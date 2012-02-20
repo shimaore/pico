@@ -26,7 +26,7 @@ class pico_request extends request
         options = @prefix uri
       if callback
         options.callback = callback
-        method options
+      method options
 
   get:  def @get
   post: def @post
