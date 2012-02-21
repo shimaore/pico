@@ -6,6 +6,8 @@
 , "author": { "name": "Stephane Alnet", "email": "stephane@shimaore.net" }
 , "scripts": {
     "prepublish": "coffee -c pico.coffee"
+  , "pretest": "coffee -c pico.coffee"
+  , "test": "coffee -e 'pico = require \"./pico\"; pico.test()'"
   }
 , "main": "pico.js"
 , "files": ["pico.js"]
