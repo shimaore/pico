@@ -48,13 +48,15 @@ pico = (base_uri) ->
 
   def_cb = (callback) ->
     if callback then (e,r,b) ->
-      unless error or 200 <= r.statusCode < 300
+      if e then return callback e, r, b
+      unless 200 <= r.statusCode < 300
         e = error:r.statusCode
       callback e, r, b
 
   head_cb = (callback) ->
     if callback then (e,r,b) ->
-      unless error or 200 <= r.statusCode < 300
+      if e then return callback e, r, b
+      unless 200 <= r.statusCode < 300
         e = error:r.statusCode
       callback e, r, _rev:r?.headers?.etag
 
