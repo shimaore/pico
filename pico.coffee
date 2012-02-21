@@ -108,7 +108,8 @@ pico = (base_uri) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
     options.uri ?= '_design/'+qs.escape(design)+'/_view/'+qs.escape(view)
-    @retrieve options, def_cb callback
+    options.json = true
+    @get options, def_cb callback
 
   return result
 
