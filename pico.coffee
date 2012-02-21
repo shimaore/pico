@@ -24,7 +24,8 @@ pico_request = (base_uri) ->
         if typeof uri is 'string'
           options = uri: prefix uri
         else
-          throw error:"Invalid parameters"
+          options = uri
+          options.uri = prefix options.uri
       if callback
         options.callback = callback
       method options
