@@ -5,14 +5,17 @@
 , "keywords": "couchdb"
 , "author": { "name": "Stephane Alnet", "email": "stephane@shimaore.net" }
 , "scripts": {
-    "prepublish": "coffee -c pico.coffee"
-  , "postpublish": "rm -f pico.js"
-  , "pretest": "coffee -c pico.coffee"
+    "prepublish": "coffee -c pico.coffee line_stream.coffee"
+  , "postpublish": "rm -f pico.js line_stream.js"
+  , "pretest": "coffee -c pico.coffee line_stream.coffee"
   , "test": "coffee -e 'pico = require \"./pico\"; pico.test()'"
-  , "posttest": "rm -f pico.js"
+  , "posttest": "rm -f pico.js line_stream.js"
   }
 , "main": "pico.js"
-, "files": ["pico.js"]
+, "files": [
+    "pico.js"
+  , "line_stream.js"
+  ]
 , "dependencies": {
     "request": ">=2.9.100"
   }

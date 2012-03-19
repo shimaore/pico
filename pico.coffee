@@ -7,6 +7,7 @@
 # pico.request is mikeal/request extended with a prefix URI that
 # is automatically prepended to any URI.
 request = require 'request'
+line_stream = require './line_stream'
 
 pico_request = (base_uri) ->
 
@@ -113,6 +114,49 @@ pico = (base_uri) ->
     options.uri ?= '_design/'+qs.escape(design)+'/_view/'+qs.escape(view)
     options.json = true
     @get options, def_cb callback
+
+  ## monitor
+  #     monitor([params,]function(doc))
+  # Continuously monitors database changes.
+  # The callback is ran every time a document is updated.
+  # The params hash may contain: filter_name, filter_params (a hash), since.
+  result.monitor = (params,callback) ->
+    if typeof params is 'function' and not callback? then [params,callback] = [{},params]
+
+    # Create the query
+    query =
+      feed: 'continuous'
+      heartbeat: 10000
+      include_docs: true
+
+    query.filter = params.filter_name if params.filter_name?
+    query.since  = params.since       if params.since?
+    if params.filter_params?
+      query[k] = v for k, v of params.filter_params
+
+    # Start the client request
+    options =
+      uri: '_changes?' + qs.stringify query
+      jar: false
+      json: true
+
+    stream = @get options, (e) ->
+      if e? then console.log e
+
+    # Automatically restart if the client terminates
+    stream.on 'end', ->
+      result.monitor params, callback
+
+    # Create the client parser
+    parser = line_stream()
+    parser.on 'line', (line) ->
+      try
+        p = JSON.parse line
+      if p?.doc?
+        callback p.doc
+
+    # Stream the request's output into the parser
+    stream.pipe parser
 
   return result
 
