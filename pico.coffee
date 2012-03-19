@@ -104,6 +104,9 @@ pico = (base_uri) ->
     options.json = true
     @del options, def_cb callback
 
+  ## view
+  #     view(design,view,options,function(error,response,json))
+  # Run a view query.
   result.view = (design,view,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
