@@ -39,10 +39,8 @@ replicate = (source_uri,target_uri,replicate_interval) ->
 
   replicate_interval ?= default_replicate_interval
 
-  replication = -> replicate config
-
   # Start replication and re-start it at intervals
-  do replication
-  setInterval replication, replicate_interval
+  start_replication()
+  setInterval start_replication, replicate_interval
 
 module.exports = replicate
