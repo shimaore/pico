@@ -162,6 +162,7 @@ pico = (base_uri) ->
 
 module.exports = pico
 pico.request = pico_request
+pico.replicate = require './replicate'
 
 ## Tests
 # Tests for pico_request

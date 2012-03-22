@@ -1,20 +1,22 @@
 {
   "name": "pico"
-, "version": "0.0.11a"
+, "version": "0.0.11b"
 , "description": "A Smaller CouchDB Client"
 , "keywords": "couchdb"
 , "author": { "name": "Stephane Alnet", "email": "stephane@shimaore.net" }
 , "scripts": {
-    "prepublish": "coffee -c pico.coffee line_stream.coffee"
-  , "postpublish": "rm -f pico.js line_stream.js"
-  , "pretest": "coffee -c pico.coffee line_stream.coffee"
-  , "test": "coffee -e 'pico = require \"./pico\"; pico.test()'"
-  , "posttest": "rm -f pico.js line_stream.js"
+    "prepublish": "coffee -c pico.coffee line_stream.coffee replicate.coffee couchdb_rewrite_url.coffee"
+  , "postpublish": "rm -f pico.js line_stream.js replicate.js couchdb_rewrite_url.js"
+  , "pretest": "coffee -c pico.coffee line_stream.coffee replicate.coffee couchdb_rewrite_url.coffee"
+  , "test": "coffee -e 'pico = require \"./pico\"; pico.test()' && coffee -e 'couchdb_rewrite_url = require \"./couchdb_rewrite_url\"; couchdb_rewrite_url.test()'"
+  , "posttest": "rm -f pico.js line_stream.js replicate.js couchdb_rewrite_url.js"
   }
 , "main": "pico.js"
 , "files": [
     "pico.js"
   , "line_stream.js"
+  , "replicate.js"
+  , "couchdb_rewrite_url.js"
   ]
 , "dependencies": {
     "request": ">=2.9.100"
