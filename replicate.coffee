@@ -27,7 +27,7 @@ replicate = (source_uri,target_uri,replicate_interval) ->
 
     replicant =
       # _id:    'some_id'   # Only when using _replicator
-      source: couchdb_rewrite_uri source_uri
+      source: couchdb_rewrite_url source_uri
       target: couchdb_rewrite_url target_uri
       continuous: true
 
