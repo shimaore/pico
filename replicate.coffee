@@ -8,7 +8,7 @@ couchdb_rewrite_url = require './couchdb_rewrite_url'
 # use the standard replicator (_replicator will not recover)
 replicator = 'http://127.0.0.1:5984/_replicate'
 
-log_error = (e) -> console.log e
+log_error = (e) -> if e? then console.log e
 
 ## replicate( source_uri, target_uri )
 # Initiate continuous replication from the source to the target.
@@ -31,7 +31,7 @@ replicate = (source_uri,target_uri,replicate_interval) ->
       target: couchdb_rewrite_url target_uri
       continuous: true
 
-    request.post replicator, replicant, log_error
+    request.post replicator, {json:replicant}, log_error
 
   # The replicator tends to die randomly, so restart it at regular intervals.
   minutes = 60 * 1000
