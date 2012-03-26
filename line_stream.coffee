@@ -29,7 +29,8 @@ module.exports = ->
     return true
 
   parser.end = (chunk,encoding) ->
-    parser.buffer += chunk.toString(encoding)
+    if chunk?
+      parser.buffer += chunk.toString(encoding)
     do process_buffer
     # Flush the buffer
     on_line buffer if buffer?
