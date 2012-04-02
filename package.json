@@ -1,6 +1,6 @@
 {
   "name": "pico"
-, "version": "0.0.11f"
+, "version": "0.0.12"
 , "description": "A Smaller CouchDB Client"
 , "keywords": "couchdb"
 , "author": { "name": "Stephane Alnet", "email": "stephane@shimaore.net" }
