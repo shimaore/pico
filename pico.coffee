@@ -15,20 +15,30 @@ pico_request = (base_uri) ->
   prefix = (uri) -> base_uri + if uri? and uri isnt '' then '/'+uri else ''
 
   # This is a variant on "function request(uri,options,callback)" in mikeal/request/main.js
+  # We support undefined URI.
   def = (method) ->
-    (uri,options,callback) ->
-      if typeof options is 'function' and not callback
-        callback = options
-      if typeof options is 'object'
+    return ->
+      args = Array.prototype.slice.call arguments
+      if args.length > 0 and typeof args[0] is 'string'
+        uri       = args.shift()
+      if args.length > 0 and typeof args[0] is 'object'
+        options   = args.shift()
+      if args.length > 0 and typeof args[0] is 'function'
+        callback  = args.shift()
+      if args.length > 0
+        throw "Unexpected #{typeof args[0]} parameter"
+
+      options ?= {}
+
+      uri ?= options.uri
+      if uri?
         options.uri = prefix uri
       else
-        if typeof uri is 'string'
-          options = uri: prefix uri
-        else
-          options = uri
-          options.uri = prefix options.uri
-      if callback
+        options.uri = prefix ''
+
+      if callback?
         options.callback = callback
+
       method options
 
   result = def request
@@ -205,6 +215,10 @@ pico_request_test = (object) ->
     assert.strictEqual b, 'DELETE'
     do conclude
   object('http://127.0.0.1:1337').head 'foo', (e,r,b) ->
+    assert.strictEqual b, ''
+    do conclude
+  # We support undefined URI.
+  object('http://127.0.0.1:1337').head (e,r,b) ->
     assert.strictEqual b, ''
     do conclude
 
