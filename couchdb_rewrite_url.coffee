@@ -18,8 +18,8 @@ couchdb_rewrite_url = (original) ->
       pathname: parsed.pathname
 
   # Simplify 'http://127.0.0.1:5984/database' into 'database'
-  if parsed.protocol is 'http' and hostname is '127.0.0.1' and port is 5984
-    return pathname
+  if parsed.protocol is 'http:' and parsed.hostname is '127.0.0.1' and parsed.port is '5984'
+    return parsed.pathname.substr(1)
 
   # If no authentication is required the URL should work just fine.
   if not parsed.auth?
@@ -43,7 +43,8 @@ couchdb_rewrite_url = (original) ->
 ## To run the tests: require('couchdb_rewrite_url').test()
 couchdb_rewrite_url.test = ->
   assert = require 'assert'
-  assert.strictEqual couchdb_rewrite_url('http://127.0.0.1:5984/bob'), 'http://127.0.0.1:5984/bob'
+  assert.strictEqual couchdb_rewrite_url('http://127.0.0.1:5984/bob'), 'bob'
+  assert.strictEqual couchdb_rewrite_url('http://example.com:5984/bob'), 'http://example.com:5984/bob'
   assert.deepEqual couchdb_rewrite_url('http://foo:bar@example.com:5984/bob'), {
     url: 'http://example.com:5984/bob'
     headers:
