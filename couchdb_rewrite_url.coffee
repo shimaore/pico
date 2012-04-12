@@ -17,13 +17,13 @@ couchdb_rewrite_url = (original) ->
       port:     parsed.port
       pathname: parsed.pathname
 
-  # Simplify 'http://127.0.0.1:5984/database' into 'database'
-  if parsed.protocol is 'http:' and parsed.hostname is '127.0.0.1' and parsed.port is '5984'
-    return parsed.pathname.substr(1)
-
-  # If no authentication is required the URL should work just fine.
   if not parsed.auth?
-    return response
+    # Simplify 'http://127.0.0.1:5984/database' into 'database'
+    if parsed.protocol is 'http:' and parsed.hostname is '127.0.0.1' and parsed.port is '5984'
+      return parsed.pathname.substr(1)
+    # If no authentication is required the URL should work just fine.
+    else
+      return response
 
   # When authentication is required, rewrite the authentication token
   # into a header (since CouchDB replication does not unescape).
