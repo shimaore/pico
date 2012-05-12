@@ -215,11 +215,11 @@ pico_request_test = (object) ->
     assert.strictEqual b, 'DELETE'
     do conclude
   object('http://127.0.0.1:1337').head 'foo', (e,r,b) ->
-    assert.strictEqual b, ''
+    assert.strictEqual b, undefined, "HEAD method failed"
     do conclude
   # We support undefined URI.
   object('http://127.0.0.1:1337').head (e,r,b) ->
-    assert.strictEqual b, ''
+    assert.strictEqual b, undefined, "short HEAD method failed"
     do conclude
 
 pico.request.test = ->
