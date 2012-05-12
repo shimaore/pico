@@ -190,8 +190,10 @@ pico_request_test = (object) ->
   assert.strictEqual typeof object('http://example.net').head, 'function', "head is not a function"
   assert.strictEqual typeof object('http://example.net').del, 'function', "del is not a function"
 
+  debug = false
   http = require 'http'
   method_server = http.createServer (req,res) ->
+    console.dir arguments  if debug
     if req.method isnt 'HEAD'
       res.end req.method
     else
