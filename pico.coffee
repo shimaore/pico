@@ -203,21 +203,33 @@ pico_request_test = (object) ->
     if attempts is 0
       method_server.close()
   object('http://127.0.0.1:1337').get 'foo', (e,r,b) ->
-    assert.strictEqual b, 'GET'
+    assert.strictEqual b, 'GET', "GET method failed"
     do conclude
   object('http://127.0.0.1:1337').post 'foo', (e,r,b) ->
-    assert.strictEqual b, 'POST'
+    assert.strictEqual b, 'POST', "POST method failed"
     do conclude
   object('http://127.0.0.1:1337').put 'foo', (e,r,b) ->
-    assert.strictEqual b, 'PUT'
+    assert.strictEqual b, 'PUT', "PUT method failed"
     do conclude
   object('http://127.0.0.1:1337').del 'foo', (e,r,b) ->
-    assert.strictEqual b, 'DELETE'
+    assert.strictEqual b, 'DELETE', "DELETE method failed"
     do conclude
   object('http://127.0.0.1:1337').head 'foo', (e,r,b) ->
     assert.strictEqual b, undefined, "HEAD method failed"
     do conclude
   # We support undefined URI.
+  object('http://127.0.0.1:1337').get (e,r,b) ->
+    assert.strictEqual b, 'GET', "short GET method failed"
+    do conclude
+  object('http://127.0.0.1:1337').post (e,r,b) ->
+    assert.strictEqual b, 'POST', "short POST method failed"
+    do conclude
+  object('http://127.0.0.1:1337').put (e,r,b) ->
+    assert.strictEqual b, 'PUT', "short PUT method failed"
+    do conclude
+  object('http://127.0.0.1:1337').del (e,r,b) ->
+    assert.strictEqual b, 'DELETE', "short DELETE method failed"
+    do conclude
   object('http://127.0.0.1:1337').head (e,r,b) ->
     assert.strictEqual b, undefined, "short HEAD method failed"
     do conclude
