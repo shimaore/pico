@@ -178,6 +178,17 @@ module.exports = pico
 pico.request = pico_request
 pico.replicate = require './replicate'
 
+# Request-compatible callback that log errors
+# for operations.
+pico._log = console.log
+pico.log = (e,r,b) ->
+  if e?
+    pico._log e
+  else
+    if not b.ok
+      pico._log b
+
+
 ## Tests
 # Tests for pico_request
 pico_request_test = (object) ->
