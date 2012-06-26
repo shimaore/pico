@@ -168,6 +168,10 @@ pico = (base_uri) ->
     # Stream the request's output into the parser
     stream.pipe parser
 
+  # Compact a database
+  result.compact = (cb) ->
+    @post '_compact', json:{}, cb
+
   return result
 
 module.exports = pico
