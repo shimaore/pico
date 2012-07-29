@@ -7,7 +7,7 @@
 # pico.request is mikeal/request extended with a prefix URI that
 # is automatically prepended to any URI.
 request = require 'request'
-line_stream = require './line_stream'
+byline = require 'byline'
 
 pico_request = (base_uri) ->
 
@@ -153,20 +153,22 @@ pico = (base_uri) ->
     stream = @get options, (e) ->
       if e? then console.log e
 
+    options = undefined
+    stream = byline stream
+
     # Automatically restart if the client terminates
     stream.on 'end', ->
+      stream = undefined
       result.monitor params, callback
 
-    # Create the client parser
-    parser = line_stream()
-    parser.on 'line', (line) ->
+    # Client parser
+    stream.on 'data', (line) ->
       try
         p = JSON.parse line
       if p?.doc?
         callback p.doc
 
-    # Stream the request's output into the parser
-    stream.pipe parser
+    return
 
   # Compact a database
   result.compact = (cb) ->
