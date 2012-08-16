@@ -129,10 +129,11 @@ pico = (base_uri) ->
   #     monitor([params,]function(doc))
   # Continuously monitors database changes.
   # The callback is ran every time a document is updated.
-  # The params hash may contain: filter_name, filter_params (a hash), since.
-  result.monitor = (params,callback) ->
-    if typeof params is 'function' and not callback? then [params,callback] = [{},params]
+  # The params hash may contain: filter_name, filter_params (a hash), since, since_name.
+  # `since_name` is used to store the last retrieved sequence number on the server, so
+  # that monitor can restart there next time it is called.
 
+  monit_handler = (params,callback) ->
     # Create the query
     query =
       feed: 'continuous'
@@ -167,6 +168,19 @@ pico = (base_uri) ->
         p = JSON.parse line
       if p?.doc?
         callback p.doc
+      if params.since_name?
+        @put "_local/#{since_name}", json: {since:p.seq}
+
+  result.monitor = (params,callback) ->
+    if typeof params is 'function' and not callback? then [params,callback] = [{},params]
+
+    if params.since_name?
+      @get "_local/#{since_name}", json:true, (e,r,p) ->
+        if p?.since?
+          params.since = p.since
+        monit_handler.apply @, arguments
+    else
+      monit_handler.apply @, arguments
 
     return
 
