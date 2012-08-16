@@ -69,7 +69,7 @@ pico = (base_uri) ->
       if e then return callback e, r, b
       unless 200 <= r.statusCode < 300
         e = error:r.statusCode
-      callback e, r, ok:true, rev:r?.headers?.etag.replace /"/g, ''
+      callback e, r, ok:true, rev:r?.headers?.etag?.replace /"/g, ''
 
   result = pico_request base_uri
 
