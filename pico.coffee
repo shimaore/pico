@@ -168,8 +168,8 @@ pico = (base_uri) ->
         p = JSON.parse line
       if p?.doc?
         callback p.doc
-      if params.since_name?
-        @put "_local/#{params.since_name}", json: {since:p.seq}
+        if params.since_name?
+          @put "_local/#{params.since_name}", json: {since:p.seq}
 
   result.monitor = (params,callback) ->
     args = arguments
