@@ -163,7 +163,7 @@ pico = (base_uri) ->
       result.monitor params, callback
 
     # Client parser
-    stream.on 'data', (line) ->
+    stream.on 'data', (line) =>
       try
         p = JSON.parse line
       if p?.doc?
@@ -176,7 +176,7 @@ pico = (base_uri) ->
     if typeof params is 'function' and not callback? then [params,callback] = [{},params]
 
     if params.since_name?
-      @get "_local/#{params.since_name}", json:true, (e,r,p) ->
+      @get "_local/#{params.since_name}", json:true, (e,r,p) =>
         if p?.since?
           params.since = p.since
         monit_handler.apply @, args
