@@ -172,15 +172,16 @@ pico = (base_uri) ->
         @put "_local/#{params.since_name}", json: {since:p.seq}
 
   result.monitor = (params,callback) ->
+    args = arguments
     if typeof params is 'function' and not callback? then [params,callback] = [{},params]
 
     if params.since_name?
       @get "_local/#{params.since_name}", json:true, (e,r,p) ->
         if p?.since?
           params.since = p.since
-        monit_handler.apply @, arguments
+        monit_handler.apply @, args
     else
-      monit_handler.apply @, arguments
+      monit_handler.apply @, args
 
     return
 
