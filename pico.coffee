@@ -26,7 +26,7 @@ pico_request = (base_uri) ->
       if args.length > 0 and typeof args[0] is 'function'
         callback  = args.shift()
       if args.length > 0
-        throw "Unexpected #{typeof args[0]} parameter"
+        throw new Error "Unexpected #{typeof args[0]} parameter"
 
       options ?= {}
 
