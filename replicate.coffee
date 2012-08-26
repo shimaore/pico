@@ -14,7 +14,7 @@ log_error = (e) -> if e? then console.log e
 # Initiate continuous replication from the source to the target.
 # The replication is restarted if it fails (as long as the node.js code
 # is running).
-replicate = (source_uri,target_uri,replicate_interval) ->
+replicate = (source_uri,target_uri,replicate_interval,filter) ->
 
   if not source_uri?
     console.log "source_uri is required, not replicating"
@@ -30,6 +30,7 @@ replicate = (source_uri,target_uri,replicate_interval) ->
       source: couchdb_rewrite_url source_uri
       target: couchdb_rewrite_url target_uri
       continuous: true
+    replicant.filter = filter if filter?
 
     request.post replicator, {json:replicant}, log_error
 
