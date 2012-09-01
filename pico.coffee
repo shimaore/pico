@@ -17,8 +17,7 @@ pico_request = (base_uri) ->
   # This is a variant on "function request(uri,options,callback)" in mikeal/request/main.js
   # We support undefined URI.
   def = (method) ->
-    return ->
-      args = Array.prototype.slice.call arguments
+    return (args...) ->
       if args.length > 0 and typeof args[0] is 'string'
         uri       = args.shift()
       if args.length > 0 and typeof args[0] is 'object'
@@ -53,35 +52,46 @@ pico_request = (base_uri) ->
 ## pico
 # pico builds on pico_request (and therefor request) and provides
 # CouchDB-oriented methods.
+# The pico request object is available as @request.
 pico = (base_uri) ->
 
   qs = require 'querystring'
 
-  def_cb = (callback) ->
+  couch_cb = (callback) ->
     if callback then (e,r,b) ->
       if e then return callback e, r, b
-      unless 200 <= r.statusCode < 300
-        e = error:r.statusCode
-      callback e, r, b
+      if 200 <= r.statusCode < 300
+        callback e, r, b
+      else
+        e = status:r.statusCode
+        callback e, r
 
   head_cb = (callback) ->
-    if callback then (e,r,b) ->
-      if e then return callback e, r, b
-      unless 200 <= r.statusCode < 300
-        e = error:r.statusCode
-      callback e, r, ok:true, rev:r?.headers?.etag?.replace /"/g, ''
+    if callback then couch_cb (e,r,b) ->
+      if e
+        callback e, r
+      else
+        callback e, r, ok:true, rev:r?.headers?.etag?.replace /"/g, ''
 
-  result = pico_request base_uri
+  result = {}
+  result.request = pico_request base_uri
 
-  ## retrieve
-  #     retrieve(id,options,function(error,response,json))
+  result.create = -> result.request.put arguments...
+  result.destroy = -> result.request.del arguments...
+
+  ## get
+  #     get(id,options,function(error,response,json))
   # Returns the document identified by id. Note that the revision is then {_rev:etag}.
-  result.retrieve = (id,options,callback) ->
+  result.get = (id,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
-    options.uri ?= qs.escape(id)
+    options.uri = qs.escape(id)
     options.json = true
-    @get options, def_cb callback
+    @request.get options, couch_cb callback
+
+  result.retrieve = ->
+    console.warn "pico.retrieve is now pico.get"
+    @get arguments...
 
   ## rev
   #     rev(id,options,function(error,response,{rev:etag}))
@@ -89,21 +99,25 @@ pico = (base_uri) ->
   result.rev = (id,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
-    options.uri ?= qs.escape(id)
-    @head options, head_cb callback
+    options.uri = qs.escape(id)
+    @request.head options, head_cb callback
 
-  ## update
+  ## put
   #     update(doc,options,function(error,response,json))
   # Creates or updates the document. The json object might contain {rev:etag} if the operation was successful.
-  result.update = (doc,options,callback) ->
+  result.put = (doc,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
+    options.uri = qs.escape doc._id
     if doc._rev?
-      options.uri ?= qs.escape(doc._id)+'?rev='+doc._rev
-    else
-      options.uri ?= qs.escape(doc._id)
+      options.qs ?= {}
+      options.qs.rev = doc._rev
     options.json = doc
-    @put options, def_cb callback
+    @request.put options, couch_cb callback
+
+  result.update = ->
+    console.warn "pico.update is now pico.put"
+    @put arguments...
 
   ## remove
   #     remove(doc,options,function(error,response,json))
@@ -111,9 +125,11 @@ pico = (base_uri) ->
   result.remove = (doc,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
-    options.uri ?= qs.escape(doc._id)+'?rev='+doc._rev
+    options.uri = qs.escape doc._id
+    options.qs ?= {}
+    options.qs.rev = doc._rev
     options.json = true
-    @del options, def_cb callback
+    @request.del options, couch_cb callback
 
   ## view
   #     view(design,view,options,function(error,response,json))
@@ -121,9 +137,9 @@ pico = (base_uri) ->
   result.view = (design,view,options,callback) ->
     if typeof options is 'function' and not callback? then [options,callback] = [{},options]
     options ?= {}
-    options.uri ?= '_design/'+qs.escape(design)+'/_view/'+qs.escape(view)
+    options.uri = '_design/'+qs.escape(design)+'/_view/'+qs.escape(view)
     options.json = true
-    @get options, def_cb callback
+    @request.get options, couch_cb callback
 
   ## monitor
   #     monitor([params,]function(doc))
@@ -151,7 +167,7 @@ pico = (base_uri) ->
       jar: false
       json: true
 
-    stream = @get options, (e) ->
+    stream = @request.get options, (e) ->
       if e? then console.log e
 
     options = undefined
@@ -169,14 +185,14 @@ pico = (base_uri) ->
       if p?.doc?
         callback p.doc
         if params.since_name?
-          @put "_local/#{params.since_name}", json: {since:p.seq}
+          @request.put "_local/#{params.since_name}", json: {since:p.seq}
 
   result.monitor = (params,callback) ->
     args = arguments
     if typeof params is 'function' and not callback? then [params,callback] = [{},params]
 
     if params.since_name?
-      @get "_local/#{params.since_name}", json:true, (e,r,p) =>
+      @request.get "_local/#{params.since_name}", json:true, (e,r,p) =>
         if p?.since?
           params.since = p.since
         monit_handler.apply @, args
@@ -187,7 +203,7 @@ pico = (base_uri) ->
 
   # Compact a database
   result.compact = (cb) ->
-    @post '_compact', json:{}, cb
+    @request.post '_compact', json:{}, cb
 
   return result
 
@@ -274,16 +290,30 @@ pico.request.test = ->
 
 # Tests for pico
 pico.test = ->
-  console.log "Starting pico tests"
-  # pico must pass all tests for pico_request
-  pico_request_test pico
 
   object = pico
 
   assert = require 'assert'
-  assert.strictEqual typeof object('http://example.net').retrieve, 'function', "retrieve is not a function"
-  assert.strictEqual typeof object('http://example.net').update, 'function', "update is not a function"
+  # .request must pass all tests for pico_request
+  console.log "Starting pico.request tests"
+  pico_request_test object.request
+  console.log "Starting pico tests"
+  assert.strictEqual typeof object('http://example.net').get, 'function', "get is not a function"
+  assert.strictEqual typeof object('http://example.net').put, 'function', "put is not a function"
   assert.strictEqual typeof object('http://example.net').rev, 'function', "rev is not a function"
-  assert.strictEqual typeof object('http://example.net').update, 'function', "update is not a function"
   assert.strictEqual typeof object('http://example.net').remove, 'function', "remove is not a function"
   assert.strictEqual typeof object('http://example.net').view, 'function', "view is not a function"
+  assert.strictEqual typeof object('http://example.net').monitor, 'function', "monitor is not a function"
+
+  db = pico 'http://127.0.0.1:5984/foo'
+  db.destroy (e,r,b) ->
+    db.create (e) ->
+      assert.strictEqual e, null
+      db.put {_id:'foo',bar:'babar'}, (e) ->
+        assert.strictEqual e, null
+        db.get 'foo', (e,r,b) ->
+          assert.strictEqual e, null
+          assert.strictEqual b.bar, 'babar'
+          db.destroy (e) ->
+            assert.strictEqual e, null
+            console.log 'Done.'
