@@ -195,9 +195,9 @@ pico = (base_uri) ->
       @request.get "_local/#{params.since_name}", json:true, (e,r,p) =>
         if p?.since?
           params.since = p.since
-        monit_handler.apply @, args
+        monit_handler.apply @, [params,callback]
     else
-      monit_handler.apply @, args
+      monit_handler.apply @, [params,callback]
 
     return
 
