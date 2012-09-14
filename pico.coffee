@@ -214,12 +214,17 @@ pico.replicate = require './replicate'
 # Request-compatible callback that log errors
 # for operations.
 pico._log = console.log
+# Request-compatible callback that log errors
+# for CouchDB operations.
 pico.log = (e,r,b) ->
   if e?
     pico._log e
   else
-    if not b.ok
-      pico._log b
+    if not b?
+      pico.log 'Missing body'
+    else
+      if not b.ok
+        pico._log b
 
 
 ## Tests
