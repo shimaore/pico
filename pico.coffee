@@ -53,7 +53,18 @@ pico_request = (base_uri) ->
 # pico builds on pico_request (and therefor request) and provides
 # CouchDB-oriented methods.
 # The pico request object is available as @request.
-pico = (base_uri) ->
+pico = (base_uri,user,pass) ->
+
+  if user?
+    pass ?= ''
+    url = require 'url'
+    parsed = url.parse base_uri
+    parsed.auth = [user,pass].join(':')
+    # This should no longer be needed with recent versions of Node.js
+    delete parsed.href
+    delete parsed.host
+    #
+    base_uri = url.format parsed
 
   qs = require 'querystring'
 
