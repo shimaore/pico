@@ -197,10 +197,11 @@ pico = (base_uri,user,pass) ->
         callback p.doc
         if params.since_name?
           @request.get "_local/#{params.since_name}", json: true, (e,r,p) =>
-            if p?
-              @request.put "_local/#{params.since_name}", json: {since:p.seq,_rev:p._rev}
-            else
-              @request.put "_local/#{params.since_name}", json: {since:p.seq}
+            q =
+              _id: "_local/#{params.since_name}"
+              since: p.seq
+            q._rev = p._rev if p?
+            @request.put "_local/#{params.since_name}", json: q
 
   result.monitor = (params,callback) ->
     args = arguments
