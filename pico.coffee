@@ -90,6 +90,8 @@ pico = (base_uri,user,pass) ->
   result.create = -> result.request.put arguments...
   result.destroy = -> result.request.del arguments...
 
+  user_id = (name) -> 'org.couchdb.user:' + name
+
   ## get
   #     get(id,options,function(error,response,json))
   # Returns the document identified by id. Note that the revision is then {_rev:etag}.
@@ -104,6 +106,8 @@ pico = (base_uri,user,pass) ->
     console.warn "pico.retrieve is now pico.get"
     @get arguments...
 
+  result.get.user = (name,args...) -> @get user_id(name), args...
+
   ## rev
   #     rev(id,options,function(error,response,{rev:etag}))
   # Returns the latest rev for the document identified by id.
@@ -112,6 +116,8 @@ pico = (base_uri,user,pass) ->
     options ?= {}
     options.uri = qs.escape(id)
     @request.head options, head_cb callback
+
+  result.rev.user = (name,args...) -> @rev user_id(name), args...
 
   ## put
   #     update(doc,options,function(error,response,json))
@@ -130,6 +136,8 @@ pico = (base_uri,user,pass) ->
     console.warn "pico.update is now pico.put"
     @put arguments...
 
+  result.put.user = (name,args...) -> @put user_id(name), args...
+
   ## remove
   #     remove(doc,options,function(error,response,json))
   # Deletes the document. The json object might contain {rev:etag} if the operation was successful.
@@ -141,6 +149,8 @@ pico = (base_uri,user,pass) ->
     options.qs.rev = doc._rev
     options.json = true
     @request.del options, couch_cb callback
+
+  result.remove.user = (name,args...) -> @remove user_id(name), args...
 
   ## view
   #     view(design,view,options,function(error,response,json))
