@@ -136,7 +136,11 @@ pico = (base_uri,user,pass) ->
     console.warn "pico.update is now pico.put"
     @put arguments...
 
-  result.put.user = (name,args...) -> @put user_id(name), args...
+  result.put.user = (doc,args...) ->
+    doc._id ?= user_id doc.name
+    doc.type ?= 'user'
+    doc.roles ?= []
+    @put doc, args...
 
   ## remove
   #     remove(doc,options,function(error,response,json))
@@ -149,8 +153,6 @@ pico = (base_uri,user,pass) ->
     options.qs.rev = doc._rev
     options.json = true
     @request.del options, couch_cb callback
-
-  result.remove.user = (name,args...) -> @remove user_id(name), args...
 
   ## view
   #     view(design,view,options,function(error,response,json))
