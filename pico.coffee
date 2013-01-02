@@ -106,7 +106,7 @@ pico = (base_uri,user,pass) ->
     console.warn "pico.retrieve is now pico.get"
     @get arguments...
 
-  result.get.user = (name,args...) -> @get user_id(name), args...
+  result.get_user = (name,args...) -> @get user_id(name), args...
 
   ## rev
   #     rev(id,options,function(error,response,{rev:etag}))
@@ -117,7 +117,7 @@ pico = (base_uri,user,pass) ->
     options.uri = qs.escape(id)
     @request.head options, head_cb callback
 
-  result.rev.user = (name,args...) -> @rev user_id(name), args...
+  result.rev_user = (name,args...) -> @rev user_id(name), args...
 
   ## put
   #     update(doc,options,function(error,response,json))
@@ -136,7 +136,7 @@ pico = (base_uri,user,pass) ->
     console.warn "pico.update is now pico.put"
     @put arguments...
 
-  result.put.user = (doc,args...) ->
+  result.put_user = (doc,args...) ->
     doc._id ?= user_id doc.name
     doc.type ?= 'user'
     doc.roles ?= []
