@@ -233,20 +233,12 @@ pico = (base_uri,user,pass) ->
   result.compact = (cb) ->
     @request.post '_compact', json:{}, cb
 
-  # Compact design documents
-  result.compact_designs = (designs,cb) ->
+  # Compact views in a design document
+  result.compact_design = (design,cb) ->
     @request.post '_view_cleanup', json:{}, (e) =>
       if e then return cb e
 
-      submitted = 0
-      error = null
-      for design in designs
-        submitted += 1
-        @request.post "_compact/#{qs.escape design}", json:{}, (e) ->
-          if e then error ?= e
-          submitted -= 1
-          if submitted is 0
-            cb error
+      @request.post "_compact/#{qs.escape design}", json:{}, cb
 
   return result
 
