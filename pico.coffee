@@ -231,10 +231,12 @@ pico = (base_uri,user,pass) ->
 
   # Compact a database
   result.compact = (cb) ->
+    cb ?= pico.log
     @request.post '_compact', json:{}, cb
 
   # Compact views in a design document
   result.compact_design = (design,cb) ->
+    cb ?= pico.log
     @request.post '_view_cleanup', json:{}, (e) =>
       if e then return cb e
 
