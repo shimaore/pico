@@ -178,6 +178,7 @@ pico = (base_uri,user,pass) ->
       feed: 'continuous'
       heartbeat: 10000
       include_docs: true
+      style: 'main_only'
 
     query.filter = params.filter_name if params.filter_name?
     query.since  = params.since       if params.since?
