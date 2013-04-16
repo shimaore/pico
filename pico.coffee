@@ -191,14 +191,11 @@ pico = (base_uri,user,pass) ->
       jar: false
       json: true
 
-    qstream = @request.get options, (e) ->
+    stream = @request.get options, (e) ->
       if e? then console.log e
-      qstream = undefined
-      result.monitor params, callback
-      return
 
     options = undefined
-    stream = byline qstream
+    stream = byline stream
 
     # Automatically restart if the client terminates
     stream.on 'end', ->
@@ -220,7 +217,10 @@ pico = (base_uri,user,pass) ->
             q._rev = t._rev if t?
             @request.put "_local/#{params.since_name}", json: q, (e,r,t) ->
               if e? then console.log e
+      if p?.error?
+        console.log "monitor: "+JSON.stringify p
       return
+    return
 
   result.monitor = (params,callback) ->
     args = arguments
