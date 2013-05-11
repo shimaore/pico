@@ -102,10 +102,6 @@ pico = (base_uri,user,pass) ->
     options.json = true
     @request.get options, couch_cb callback
 
-  result.retrieve = ->
-    console.warn "pico.retrieve is now pico.get"
-    @get arguments...
-
   result.get_user = (name,args...) -> @get user_id(name), args...
 
   ## rev
@@ -131,10 +127,6 @@ pico = (base_uri,user,pass) ->
       options.qs.rev = doc._rev
     options.json = doc
     @request.put options, couch_cb callback
-
-  result.update = ->
-    console.warn "pico.update is now pico.put"
-    @put arguments...
 
   result.put_user = (doc,args...) ->
     doc._id ?= user_id doc.name
