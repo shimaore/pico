@@ -306,7 +306,7 @@ pico_request_test = (object) ->
     assert.strictEqual b, 'DELETE', "DELETE method failed"
     do conclude
   object('http://127.0.0.1:1337').head 'foo', (e,r,b) ->
-    assert.strictEqual b, undefined, "HEAD method failed"
+    assert.strictEqual b, '', "HEAD method failed"
     do conclude
   # We support undefined URI.
   object('http://127.0.0.1:1337').get (e,r,b) ->
@@ -346,7 +346,7 @@ pico.test = ->
   assert.strictEqual typeof object('http://example.net').view, 'function', "view is not a function"
   assert.strictEqual typeof object('http://example.net').monitor, 'function', "monitor is not a function"
 
-  db = pico 'http://127.0.0.1:5984/foo'
+  db = pico 'http://127.0.0.1:15984/foo'
   db.destroy (e,r,b) ->
     db.create (e) ->
       assert.strictEqual e, null
