@@ -19,7 +19,7 @@
   ]
 , "dependencies": {
     "request": ">=2.16.6"
-  , "byline": ">=2.0.3"
+  , "byline": ">=2.0.3 <4.0.0"
   }
 , "private": false
 }
