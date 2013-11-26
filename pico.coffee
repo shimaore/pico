@@ -346,7 +346,7 @@ pico.test = ->
   assert.strictEqual typeof object('http://example.net').view, 'function', "view is not a function"
   assert.strictEqual typeof object('http://example.net').monitor, 'function', "monitor is not a function"
 
-  db = pico 'http://127.0.0.1:15984/foo'
+  db = pico 'http://127.0.0.1:5984/foo'
   db.destroy (e,r,b) ->
     db.create (e) ->
       assert.strictEqual e, null
