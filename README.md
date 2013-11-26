@@ -1,7 +1,7 @@
 pico - A smaller CouchDB client for Node.js
 -------------------------------------------
 
-(c) 2012 Stephane Alnet
+[![Build status](https://travis-ci.org/shimaore/pico.png)](https://travis-ci.org/shimaore/pico)
 
 pico.request is mikeal/request extended with a prefix URI that
 is automatically prepended to any URI.
